@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="2.1"
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd">
+
+	<named-query name="filmesNotaMaiorQue"> <!-- nome da query para a gente chamar -->
+
+		<query>
+		select distinct f from Filme f <!-- puxando da classe Filme e não da tabela filmes -->
+		join fetch f.atores	<!-- fazendo um fetch para quando puxar os atores -->
+		where f.nota > :nota
+	</query>
+
+	</named-query>
+
+
+	<named-native-query name="mediaGeralDosFilmes"
+		result-set-mapping="NotaFilmeMap"><!-- aqui passamos o nome que queremos para chamar o 
+			native query e o nome que passamos no result set -->
+
+		<query>
+			select avg(nota) as media from filmes
+		</query>
+
+	</named-native-query>
+
+	<sql-result-set-mapping name="NotaFilmeMap"> <!-- defindo o nome do result set mapping pois iremos usar no native query -->
+		<constructor-result
+			target-class="modelo.consulta.NotaFilme"> <!-- informando o caminho onde está a classe responsavel pelo calc, lá esperasse 
+				que tenha um construtor que tenha os parametros passados abaixo -->
+			<column name="media" class="java.lang.Double" /> <!-- aqui definimos uma coluna que tenha os mesmos atributos da classe mencionada 
+				acima -->
+		</constructor-result>
+	</sql-result-set-mapping>
+
+</entity-mappings>
